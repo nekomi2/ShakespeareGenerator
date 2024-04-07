@@ -6,4 +6,6 @@ python -m venv venv
 source venv/bin/activate  # On Windows use `venv\Scripts\activate`
 pip install fastapi uvicorn transformers
 ```
-
+# Run the server
+uvicorn main:app --reload
+```
