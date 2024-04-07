@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shakespeare Generator</title>
+</head>
+<body>
+    <form id="textForm">
+        <label for="textInput">Enter text:</label>
+        <input type="text" id="textInput" name="textInput" value="shakespeare" required>
+        <label for="maxLength">Max Length:</label>
+        <input type="number" id="maxLength" name="maxLength" value="512" required>
+        <label for="seed">Seed:</label>
+        <input type="number" id="seed" name="seed" value="42" required>
+        <button type="submit">Generate</button>
+    </form>
+    <div>
+        <p>Generated Text:</p>
+        <p id="generatedText"></p>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
