@@ -2,6 +2,8 @@ from fastapi import FastAPI, HTTPException
 from transformers import pipeline, set_seed
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
+import time
+
 
 app = FastAPI()
 origins = [
@@ -31,10 +33,12 @@ set_seed(42)
 @app.post("/generate/")
 async def generate_text(prompt: Prompt):
     try:
+        before = time.time()
         set_seed(prompt.seed)
         generated = generator(
             prompt.text, max_length=prompt.max_length, num_return_sequences=1
         )
-        return {"generated_text": generated[0]["generated_text"]}
+        duration = time.time() - before
+        return {"generated_text": generated[0]["generated_text"], "response_time": duration}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
