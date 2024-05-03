@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Shakespeare Generator</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <form id="textForm">
-        <label for="textInput">Enter text:</label>
-        <input type="text" id="textInput" name="textInput" value="shakespeare" required>
+        <label for="textInput" >Enter text:</label>
+        <textarea type="text" id="textInput" class="large-text-input" name="textInput" value="shakespeare" required></textarea>
         <label for="maxLength">Max Length:</label>
         <input type="number" id="maxLength" name="maxLength" value="512" required>
         <label for="seed">Seed:</label>
