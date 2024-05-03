@@ -28,7 +28,7 @@ class Prompt(BaseModel):
 
 
 # Load the trained model and tokenizer
-model_path = "/training/outputs/gpt2-tiny-shakespeare-final"
+model_path = "../training/outputs/gpt2-tiny-shakespeare-final"
 tokenizer = GPT2Tokenizer.from_pretrained(model_path)
 model = GPT2LMHeadModel.from_pretrained(model_path)
 
@@ -39,18 +39,13 @@ async def generate_text(prompt: Prompt):
     try:
         before = time.time()
         set_seed(prompt.seed)
-        user_prompt = f'Below is an instruction that describes a task. \
-        Write a response that appropriately completes the request. \
-        \n ### Instruction: \
-        \n Pretend you are Shakespeare, complete this request in Shakespearean English. {prompt.text}\
-        \n ### Response:'
         generated = generator(
-            user_prompt, max_length=prompt.max_length, num_return_sequences=1
+            prompt.text, max_length=prompt.max_length, num_return_sequences=1
         )
         duration = time.time() - before
         print(generated)
         return {
-            "generated_text": generated[0]["generated_text"][len(user_prompt) :],
+            "generated_text": generated[0]["generated_text"],
             "response_time": duration,
         }
     except Exception as e:
