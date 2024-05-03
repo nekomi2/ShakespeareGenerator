@@ -1,11 +1,8 @@
 from fastapi import FastAPI, HTTPException
-from transformers import set_seed, AutoTokenizer
-import transformers
-import torch
+from transformers import pipeline, set_seed
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 import time
-from transformers import AutoModelForCausalLM
 
 
 app = FastAPI()
@@ -25,15 +22,12 @@ app.add_middleware(
 
 class Prompt(BaseModel):
     text: str
-    max_length: int = 50
-    seed: int = 42
+    max_length: int = 300
+    seed: int = 72
 
 
+generator = pipeline("text-generation", model="vicgalle/gpt2-open-instruct-v1")
 set_seed(42)
-model = "meta-llama/Llama-2-7b-chat-hf"
-
-tokenizer = AutoTokenizer.from_pretrained(model)
-model = AutoModelForCausalLM.from_pretrained(model, load_in_4bit=True, device_map="auto")
 
 
 @app.post("/generate/")
@@ -41,12 +35,18 @@ async def generate_text(prompt: Prompt):
     try:
         before = time.time()
         set_seed(prompt.seed)
-        inputs = tokenizer(prompt.text, return_tensors="pt")
-        outputs = model.generate(**inputs, max_length=prompt.max_length)
-        generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+        user_prompt = f'Below is an instruction that describes a task. \
+        Write a response that appropriately completes the request. \
+        \n ### Instruction: \
+        \n Pretend you are Shakespeare, complete this request in Shakespearean English. {prompt.text}\
+        \n ### Response:'
+        generated = generator(
+            user_prompt, max_length=prompt.max_length, num_return_sequences=1
+        )
         duration = time.time() - before
+        print(generated)
         return {
-            "generated_text": generated_text,
+            "generated_text": generated[0]["generated_text"][len(user_prompt) :],
             "response_time": duration,
         }
     except Exception as e:
